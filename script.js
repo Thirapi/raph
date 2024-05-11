@@ -103,25 +103,68 @@ function sendMessage() {
     }
 }
 
-// Fungsi untuk menampilkan pesan di area chat
-function displayMessage(sender, text) {
-    const chatMessages = document.getElementById('chatMessages');
-
-    const messageElement = document.createElement('div');
-    messageElement.classList.add('message');
-
-    const senderElement = document.createElement('span');
-    senderElement.classList.add('sender');
-    senderElement.textContent = sender + ': ';
-
-    const textElement = document.createElement('span');
-    textElement.textContent = text;
-
-    messageElement.appendChild(senderElement);
-    messageElement.appendChild(textElement);
-
-    chatMessages.appendChild(messageElement);
-
-    // Otomatis scroll ke bawah setelah menambahkan pesan baru
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+function loginUser(username, password) {
+    return fetch('/api/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, password })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Authentication failed');
+        }
+        return response.json();
+    })
+    .then(data => {
+        return data.token;
+    })
+    .catch(error => {
+        console.error('Login failed:', error.message);
+        return null;
+    });
 }
+
+function sendMessage(token, sender, recipient, text) {
+    return fetch('/api/messages', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ sender, recipient, text })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to send message');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Message sent successfully:', data);
+    })
+    .catch(error => {
+        console.error('Error sending message:', error.message);
+    });
+}
+
+// Contoh penggunaan loginUser dan sendMessage
+const username = 'user';
+const password = 'password';
+
+loginUser(username, password)
+    .then(token => {
+        if (token) {
+            console.log('Login successful! Token:', token);
+
+            // Contoh pengiriman pesan setelah login berhasil
+            const sender = 'user1';
+            const recipient = 'user2';
+            const messageText = 'Hello there!';
+
+            sendMessage(token, sender, recipient, messageText);
+        } else {
+            console.log('Login failed!');
+        }
+    });
