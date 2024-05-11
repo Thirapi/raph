@@ -77,23 +77,51 @@ function updateClock() {
 // Fungsi untuk membuka aplikasi chat
 function openChatApp() {
     var chatApp = document.getElementById('chatApp');
-    if (chatApp) {
-        chatApp.style.display = 'block';
-    }
+    chatApp.style.display = 'block';
 }
 
 // Fungsi untuk meminimalkan aplikasi chat
 function minimizeChatApp() {
     var chatApp = document.getElementById('chatApp');
-    if (chatApp) {
-        chatApp.style.display = 'none';
-    }
+    chatApp.style.display = 'none';
 }
 
 // Fungsi untuk menutup aplikasi chat
 function closeChatApp() {
     var chatApp = document.getElementById('chatApp');
-    if (chatApp) {
-        chatApp.style.display = 'none';
+    chatApp.style.display = 'none';
+}
+
+// Fungsi untuk mengirim pesan
+function sendMessage() {
+    const messageInput = document.getElementById('messageInput');
+    const messageText = messageInput.value.trim();
+
+    if (messageText) {
+        displayMessage('You', messageText); // Tampilkan pesan pengguna
+        messageInput.value = ''; // Bersihkan input setelah pesan terkirim
     }
+}
+
+// Fungsi untuk menampilkan pesan di area chat
+function displayMessage(sender, text) {
+    const chatMessages = document.getElementById('chatMessages');
+
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('message');
+
+    const senderElement = document.createElement('span');
+    senderElement.classList.add('sender');
+    senderElement.textContent = sender + ': ';
+
+    const textElement = document.createElement('span');
+    textElement.textContent = text;
+
+    messageElement.appendChild(senderElement);
+    messageElement.appendChild(textElement);
+
+    chatMessages.appendChild(messageElement);
+
+    // Otomatis scroll ke bawah setelah menambahkan pesan baru
+    chatMessages.scrollTop = chatMessages.scrollHeight;
 }
