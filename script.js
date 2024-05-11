@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Menangani klik tombol Start
-    document.getElementById('startButton').addEventListener('click', function(e) {
+    var startButton = document.getElementById('startButton');
+    startButton.addEventListener('click', function(e) {
         e.stopPropagation(); // Menghentikan event dari menyebabkan penyebaran (bubbling) ke elemen lain
         toggleShutdownMenu(); // Memunculkan atau menyembunyikan menu shutdown
     });
@@ -8,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Fungsi untuk memunculkan atau menyembunyikan menu shutdown
     function toggleShutdownMenu() {
         var shutdownMenu = document.getElementById('shutdownMenu');
-        if (shutdownMenu.style.display === 'block') {
+        if (window.getComputedStyle(shutdownMenu).display === 'block') {
             shutdownMenu.style.display = 'none'; // Sembunyikan menu jika sudah terbuka
         } else {
             shutdownMenu.style.display = 'block'; // Tampilkan menu shutdown
@@ -27,20 +28,29 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Menangani klik opsi shutdown
-    document.getElementById('shutdownOption').addEventListener('click', function(e) {
+    var shutdownOption = document.getElementById('shutdownOption');
+    shutdownOption.addEventListener('click', function(e) {
         e.preventDefault(); // Menghentikan aksi default dari link
         alert('Shutdown Process Placeholder!'); // Contoh: Jalankan proses shutdown
     });
 
-    // Menangani klik opsi restart
-    document.getElementById('restartOption').addEventListener('click', function(e) {
-        e.preventDefault(); // Menghentikan aksi default dari link
-        alert('Restart Process Placeholder!'); // Contoh: Jalankan proses restart
-    });
+    // // Menangani klik opsi restart
+    // var restartOption = document.getElementById('restartOption');
+    // restartOption.addEventListener('click', function(e) {
+    //     e.preventDefault(); // Menghentikan aksi default dari link
+    //     alert('Restart Process Placeholder!'); // Contoh: Jalankan proses restart
+    // });
 
-    // Fungsi untuk mengupdate dan menampilkan jam real-time
-    function updateClock() {
-        var clockElement = document.getElementById('clock');
+    // Memanggil fungsi updateClock() untuk pertama kali
+    updateClock();
+});
+
+// Fungsi untuk mengupdate dan menampilkan jam real-time
+function updateClock() {
+    var clockElement = document.getElementById('clock');
+    if (!clockElement) return; // Pastikan elemen clock tersedia
+
+    function updateTime() {
         var currentTime = new Date();
 
         var hours = currentTime.getHours();
@@ -56,25 +66,34 @@ document.addEventListener('DOMContentLoaded', function() {
 
         var clockString = hours + ':' + minutes + ':' + seconds + ' ' + amPM;
         clockElement.textContent = clockString; // Memasukkan waktu ke dalam elemen clock
-
-        // Mengupdate jam setiap detik (rekursif)
-        setTimeout(updateClock, 1000);
     }
 
-    // Memanggil fungsi updateClock() untuk pertama kali
-    updateClock();
-});
+    updateTime(); // Panggil updateTime() pertama kali
+
+    // Mengupdate jam setiap detik (rekursif)
+    setInterval(updateTime, 1000);
+}
+
+// Fungsi untuk membuka aplikasi chat
 function openChatApp() {
     var chatApp = document.getElementById('chatApp');
-    chatApp.style.display = 'block';
+    if (chatApp) {
+        chatApp.style.display = 'block';
+    }
 }
 
+// Fungsi untuk meminimalkan aplikasi chat
 function minimizeChatApp() {
     var chatApp = document.getElementById('chatApp');
-    chatApp.style.display = 'none';
+    if (chatApp) {
+        chatApp.style.display = 'none';
+    }
 }
 
+// Fungsi untuk menutup aplikasi chat
 function closeChatApp() {
     var chatApp = document.getElementById('chatApp');
-    chatApp.style.display = 'none';
+    if (chatApp) {
+        chatApp.style.display = 'none';
+    }
 }
