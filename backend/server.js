@@ -48,3 +48,11 @@ app.post('/api/login', async (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
+// Coba membuat koneksi pool
+pool.connect((err, client, release) => {
+    if (err) {
+        return console.error('Error acquiring client', err.stack);
+    }
+    console.log('Connected to database');
+    release(); // Lepaskan client kembali ke pool
+});

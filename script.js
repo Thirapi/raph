@@ -149,22 +149,34 @@ function sendMessage(token, sender, recipient, text) {
     });
 }
 
-// Contoh penggunaan loginUser dan sendMessage
-const username = 'user';
-const password = 'password';
+async function login(event) {
+    event.preventDefault();
+    
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
 
-loginUser(username, password)
-    .then(token => {
-        if (token) {
-            console.log('Login successful! Token:', token);
+    try {
+        const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, password })
+        });
 
-            // Contoh pengiriman pesan setelah login berhasil
-            const sender = 'user1';
-            const recipient = 'user2';
-            const messageText = 'Hello there!';
+        const data = await response.json();
 
-            sendMessage(token, sender, recipient, messageText);
+        if (response.ok) {
+            // Login berhasil, simpan token dan tampilkan aplikasi chat
+            localStorage.setItem('chatAppToken', data.token);
+            openChatApp();
         } else {
-            console.log('Login failed!');
+            // Login gagal, tampilkan pesan error
+            alert(data.message);
         }
-    });
+    } catch (error) {
+        console.error('Error during login:', error);
+        alert('Login failed. Please try again.');
+    }
+}
+
