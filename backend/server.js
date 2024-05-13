@@ -1,58 +1,52 @@
+// server.js
+
 const express = require('express');
-const { Pool } = require('pg');
-const bcrypt = require('bcrypt');
+const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
+const prisma = new PrismaClient();
 const app = express();
-const PORT = process.env.PORT || 3000;
-
-const pool = new Pool({
-    user: 'default',
-    host: 'ep-super-breeze-a1d0bpfn-pooler.ap-southeast-1.aws.neon.tech',
-    database: 'verceldb',
-    password: 'em0VrFtb7Ukl',
-    port: 5432,
-});
-
 app.use(express.json());
 
-// Endpoint untuk login
-app.post('/api/login', async (req, res) => {
-    const { username, password } = req.body;
-    try {
-        // Cari user berdasarkan username
-        const query = 'SELECT * FROM users WHERE username = $1';
-        const result = await pool.query(query, [username]);
-        const user = result.rows[0];
-
-        if (!user) {
-            return res.status(401).json({ message: 'Authentication failed' });
-        }
-
-        // Verifikasi password
-        const passwordMatch = await bcrypt.compare(password, user.password);
-        if (!passwordMatch) {
-            return res.status(401).json({ message: 'Authentication failed' });
-        }
-
-        // Buat token JWT
-        const token = jwt.sign({ username: user.username }, 'your_secret_key', { expiresIn: '1h' });
-
-        res.json({ token });
-    } catch (error) {
-        console.error('Error authenticating user:', error.message);
-        res.status(500).json({ error: 'Authentication failed' });
-    }
+// Endpoint untuk registrasi user
+app.post('/register', async (req, res) => {
+  const { username, password } = req.body;
+  const hashedPassword = await bcrypt.hash(password, 10);
+  
+  try {
+    const user = await prisma.user.create({
+      data: {
+        username,
+        password: hashedPassword
+      }
+    });
+    res.json({ message: 'User registered successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to register user' });
+  }
 });
 
+// Endpoint untuk login user
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+
+  const user = await prisma.user.findUnique({ where: { username } });
+  if (!user) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+  if (!isPasswordValid) {
+    return res.status(401).json({ error: 'Invalid password' });
+  }
+
+  const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+  res.json({ token });
+});
+
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
-// Coba membuat koneksi pool
-pool.connect((err, client, release) => {
-    if (err) {
-        return console.error('Error acquiring client', err.stack);
-    }
-    console.log('Connected to database');
-    release(); // Lepaskan client kembali ke pool
+  console.log(`Server is running on port ${PORT}`);
 });
