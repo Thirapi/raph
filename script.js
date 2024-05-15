@@ -27,19 +27,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Menangani klik opsi shutdown
-    var shutdownOption = document.getElementById('shutdownOption');
-    shutdownOption.addEventListener('click', function(e) {
-        e.preventDefault(); // Menghentikan aksi default dari link
-        alert('Shutdown Process Placeholder!'); // Contoh: Jalankan proses shutdown
-    });
-
-    // // Menangani klik opsi restart
-    // var restartOption = document.getElementById('restartOption');
-    // restartOption.addEventListener('click', function(e) {
-    //     e.preventDefault(); // Menghentikan aksi default dari link
-    //     alert('Restart Process Placeholder!'); // Contoh: Jalankan proses restart
-    // });
+// Fungsi untuk menampilkan blue screen
+function showBlueScreen() {
+    var blueScreen = document.getElementById('blueScreen');
+    blueScreen.classList.remove('hidden');
+  
+    document.addEventListener('keydown', function() {
+      blueScreen.classList.add('hidden');
+      window.location.reload(); // Reload halaman untuk memulai ulang
+    }, { once: true }); // Pastikan event listener hanya dipanggil sekali
+  }
 
     // Memanggil fungsi updateClock() untuk pertama kali
     updateClock();
