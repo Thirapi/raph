@@ -27,6 +27,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+// Menangani klik opsi shutdown
+document.getElementById('shutdownOption').addEventListener('click', function(e) {
+    e.preventDefault(); // Menghentikan aksi default dari link
+    showBlueScreen(); // Tampilkan blue screen
+  });
+
 // Fungsi untuk menampilkan blue screen
 function showBlueScreen() {
     var blueScreen = document.getElementById('blueScreen');
