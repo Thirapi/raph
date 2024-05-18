@@ -287,8 +287,15 @@ img {
 .shutdownMenu ul li a:hover {
   background-color: #EFEFEF;
 }
+
+.hidden {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s 0.5s, opacity 0.5s linear;
+}
+
 #blueScreen {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -300,8 +307,14 @@ img {
   justify-content: center;
   align-items: center;
   font-size: 24px;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s 0.5s, opacity 0.5s linear;
+  z-index: 1001;
 }
 
-.hidden {
-  display: none;
+#blueScreen:not(.hidden) {
+  visibility: visible;
+  opacity: 1;
+  transition-delay: 0s;
 }

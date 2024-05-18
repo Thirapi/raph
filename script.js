@@ -27,18 +27,21 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-// Menangani klik opsi shutdown
-document.getElementById('shutdownOption').addEventListener('click', function(e) {
+ // Menangani klik opsi shutdown
+ document.getElementById('shutdownOption').addEventListener('click', function(e) {
     e.preventDefault(); // Menghentikan aksi default dari link
+    console.log('Shutdown option clicked'); // Debugging log
     showBlueScreen(); // Tampilkan blue screen
   });
 
-// Fungsi untuk menampilkan blue screen
-function showBlueScreen() {
+  // Fungsi untuk menampilkan blue screen
+  function showBlueScreen() {
     var blueScreen = document.getElementById('blueScreen');
+    console.log('Displaying blue screen'); // Debugging log
     blueScreen.classList.remove('hidden');
-  
+    
     document.addEventListener('keydown', function() {
+      console.log('Key pressed, hiding blue screen'); // Debugging log
       blueScreen.classList.add('hidden');
       window.location.reload(); // Reload halaman untuk memulai ulang
     }, { once: true }); // Pastikan event listener hanya dipanggil sekali
